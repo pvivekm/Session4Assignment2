@@ -1,0 +1,94 @@
+Pig:
+Bigdata.Session4.Assignment2
+
+Sample Dataset – StudentInfo.txt
+001,Rajiv,21,Hyderabad
+002,siddarth,22,Kolkata 
+003,Rajesh,22,Delhi 
+004,Preethi,21,Pune 
+005,Trupthi,23,Bhuwaneshwar 
+006,Archana,23 ,Chennai 
+007,Komal,24,trivendram 
+008,Bharathi,24,Chennai
+
+Sample Dataset – StudentWork.txt
+001,Rajiv,21,Hyderabad
+002,siddarth,22,Kolkata 
+003,Rajesh,22,Delhi 
+004,Preethi,21,Pune 
+005,Trupthi,23,Bhuwaneshwar 
+006,Archana,23 ,Chennai 
+007,Komal,24,trivendram 
+008,Bharathi,24,Chennai
+
+1)	Concat
+
+grunt> student_name_concat = foreach student_details Generate CONCAT (firstname, lastname);
+
+
+2)	Tokenize
+grunt> student_name_tokenize = foreach student_details  Generate TOKENIZE(name);
+
+
+
+3)	Sum
+
+grunt> student_data = LOAD '/home/acadgild/Student_Work.txt' USING PigStorage(',')
+   as (id:int, name:chararray, workdate:chararray, daily_typing_pages:int);
+
+grunt> student_group = Group student_data all;
+
+grunt> student_workpages_sum = foreach student_group Generate    (student_data.name,employee_data.daily_typing_pages),SUM(student _data.daily_typing_pages);
+
+grunt> Dump student_workpages_sum;
+
+4)	Min
+
+
+grunt> student_gpa_min = foreach student_group_all  Generate
+   (student_details.firstname, student_details.gpa), MIN(student_details.gpa);
+
+grunt> Dump student_gpa_min;
+
+5)	Max
+
+
+grunt> student_gpa_max = foreach student_group_all  Generate
+   (student_details.firstname, student_details.gpa), MAX(student_details.gpa);
+
+grunt> Dump student_gpa_max;
+
+
+6)	Limit
+
+
+grunt> limit_example = LIMIT student_details 2; 
+
+
+7)	Store
+
+
+Used to store the relation in HDFS 
+grunt> STORE student INTO ' hdfs://localhost:9000/pig_Output/ ' USING PigStorage (',');
+
+
+8)	Distinct
+
+
+To remove the duplicate tuples 
+
+grunt> distinct_data = DISTINCT student_details;
+
+9)	Flatten
+
+
+grunt> r1 = load 'test_file' using PigStorage(',') as (a:int, b:int);
+grunt> r2 = group r1 by a;
+grunt> r3 = foreach r2 generate group as a, r1 as b;
+grunt> r4 = foreach r3 generate a, FLATTEN(BagToTuple(b.b));
+grunt> dump r4;
+
+10)	IsEmpty
+Check whether the bag is empty or not.
+grunt> c = filter b by not IsEmpty(group);
+
